@@ -1,0 +1,47 @@
+{
+  "name": "platzigram",
+  "version": "0.1.0",
+  "description": "Comparte fotos con la comunidad de platzi",
+  "main": "server.js",
+  "keywords": [
+    "platzi",
+    "javascript",
+    "johnserrano"
+  ],
+  "author": "John Serrano",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.15.3",
+    "empty-element": "^1.0.0",
+    "express": "^4.14.0",
+    "file-extension": "^3.1.0",
+    "intl": "^1.2.5",
+    "intl-messageformat": "^1.3.0",
+    "intl-relativeformat": "^1.3.0",
+    "materialize-css": "^0.97.8",
+    "multer": "^1.2.1",
+    "page": "^1.7.1",
+    "pug": "^0.1.0",
+    "superagent": "^3.3.1",
+    "title": "^1.0.0",
+    "webcamjs": "^1.0.18",
+    "yo-yo": "^1.3.1"
+  },
+  "devDependencies": {
+    "babel-plugin-syntax-async-functions": "^6.13.0",
+    "babel-plugin-transform-regenerator": "^6.21.0",
+    "babel-polyfill": "^6.20.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.1.1",
+    "gulp": "^3.9.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^2.3.2",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.7.0"
+  },
+  "scripts": {
+    "build": "gulp",
+    "start": "start gulp watch && start gulp watchsass && node server.js "
+  }
+}
