@@ -3,15 +3,36 @@ var app = express();//Creamos el objeto app
 
 var multer  = require('multer');
 var ext = require('file-extension');
+var aws = require('aws-sdk');
+var multerS3 = require('multer-s3');
 
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, './uploads')
+var config = require('./config');
+
+var s3 = new aws.S3({
+  accessKeyId: config.aws.accessKey,
+  secretAccessKey: config.aws.secretKey
+});
+
+var storage = multerS3({
+  s3: s3,
+  bucket: 'platzigram-andrey',
+  acl: 'public-read',
+  metadata: function (req, file, cb) {
+    cb(null, { fieldName: file.fieldname })
   },
-  filename: function (req, file, cb) {
+  key: function (req, file, cb) {
     cb(null, +Date.now() + '.' + ext(file.originalname))
   }
-})
+});
+
+// var storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, './uploads')
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, +Date.now() + '.' + ext(file.originalname))
+//   }
+// })
 
 var upload = multer({ storage: storage }).single('picture');//el name del type file
 
@@ -38,7 +59,7 @@ app.get('/api/pictures', function (req, res){
     {
       user:{
         username: 'jandrey15',
-        avatar: 'https://scontent.fctg1-1.fna.fbcdn.net/v/t1.0-1/c0.0.160.160/p160x160/15349616_10209463857771052_551131432001784378_n.jpg?oh=1e1f97f7fa7d6ca6f737e154a6f4f135&oe=58BCB08F'
+        avatar: 'https://scontent.fctg1-1.fna.fbcdn.net/v/t31.0-8/s960x960/17388763_10210434599398986_6031305122262083505_o.jpg?oh=722b62fed19becfc3dbbc60fe3b55ec5&oe=59BF22B4'
       },
       url: 'office.jpg',
       likes: 0,
@@ -48,7 +69,7 @@ app.get('/api/pictures', function (req, res){
     {
       user:{
         username: 'andrea',
-        avatar: 'https://scontent.fctg1-1.fna.fbcdn.net/v/t1.0-1/p160x160/15726718_756667517823351_7430823139806751045_n.jpg?oh=4bfea11ff4391f268b2cf6afe0c387c3&oe=58F18998'
+        avatar: 'https://scontent.fctg1-1.fna.fbcdn.net/v/t31.0-8/s960x960/17388763_10210434599398986_6031305122262083505_o.jpg?oh=722b62fed19becfc3dbbc60fe3b55ec5&oe=59BF22B4'
       },
       url: 'office.jpg',
       likes: 1,
