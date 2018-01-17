@@ -1,12 +1,15 @@
 var express = require('express');
-var app = express();//Creamos el objeto app 
 
 var multer  = require('multer');
 var ext = require('file-extension');
 var aws = require('aws-sdk');
 var multerS3 = require('multer-s3');
-
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const expressSession = require('express-session');
+const passport = require('passport');
 var config = require('./config');
+const port = process.env.PORT || 3000;
 
 var s3 = new aws.S3({
   accessKeyId: config.aws.accessKey,
@@ -26,15 +29,27 @@ var storage = multerS3({
 });
 
 // var storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, './uploads')
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, +Date.now() + '.' + ext(file.originalname))
+  //   destination: function (req, file, cb) {
+    //     cb(null, './uploads')
+    //   },
+    //   filename: function (req, file, cb) {
+      //     cb(null, +Date.now() + '.' + ext(file.originalname))
 //   }
 // })
 
 var upload = multer({ storage: storage }).single('picture');//el name del type file
+var app = express();//Creamos el objeto app
+
+app.set(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser);
+app.use(expressSession({
+  secret: config.secret,
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.set('view engine', 'pug');//Indicamos a express que vamos a usar views basadas en pug -> jade
 
@@ -144,8 +159,8 @@ app.get('/:username/:id', function (req, res) {
   res.render('index', { title: `Platzigram - ${req.params.username}` });
 })
 
-app.listen(3000, function (err){
+app.listen(port, function (err){
   if (err) return console.log('Hubo un error'), process.exit(1);//Devolvemos un mensaje si existe algun error
 
-  console.log('Escuchando en el puerto 3000');
+  console.log(`Escuchando en el puerto ${port}`);
 });
