@@ -25,6 +25,7 @@
     "materialize-css": "^0.97.8",
     "multer": "^1.2.1",
     "multer-s3": "^2.3.2",
+    "platzigramclient": "johnserrano15/platzigram-client",
     "page": "^1.7.1",
     "passport": "^0.4.0",
     "passport-facebook": "^2.1.1",
