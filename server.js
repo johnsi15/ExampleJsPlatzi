@@ -64,18 +64,18 @@ app.get('/', function (req, res){
   res.render('index', { title: 'Platzigram' });//Rendereamos al archivos index que se encuentra en una carpeta views
 });
 
-app.get('/signup', function (req, res){
-  res.render('index', { title: 'Platzigram - Signup' });
-});
+// app.get('/signup', function (req, res){
+//   res.render('index', { title: 'Platzigram - Signup' });
+// });
 
-app.post('/signup', function (req, res){
-  const user = req.body;
-  client.saveuser(user, function (err, usr) {
-    if (err) return res.status(500).send(err.message);
+// app.post('/signup', function (req, res){
+//   const user = req.body;
+//   client.saveuser(user, function (err, usr) {
+//     if (err) return res.status(500).send(err.message);
 
-    res.redirect('/signin');
-  })
-});
+//     res.redirect('/signin');
+//   })
+// });
 
 app.get('/signin', function (req, res){
   res.render('index', { title: 'Platzigram - Signin' });
