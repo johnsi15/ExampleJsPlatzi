@@ -2,16 +2,42 @@ var express = require('express');
 var app = express();//Creamos el objeto app 
 
 var multer  = require('multer');
+var aws = require('aws-sdk');
+var multerS3 = require('multer-s3');
 var ext = require('file-extension');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const expressSession = require('express-session');
+const passport = require('passport');
+// const platzigram = require('platzigramclient');
+const config = require('./config');
+const port = process.env.PORT || 3000;
 
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, './uploads')
+// var storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, './uploads')
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, +Date.now() + '.' + ext(file.originalname))
+//   }
+// })
+
+var s3 = new aws.S3({
+  accessKeyId: config.aws.accessKey,
+  secretAccessKey: config.aws.secretKey
+});
+
+var storage = multerS3({
+  s3: s3,
+  bucket: 'platzigram-andrey',
+  acl: 'public-read',
+  metadata: function (req, file, cb) {
+    cb(null, { fieldName: file.fieldname })
   },
-  filename: function (req, file, cb) {
+  key: function (req, file, cb) {
     cb(null, +Date.now() + '.' + ext(file.originalname))
   }
-})
+});
 
 var upload = multer({ storage: storage }).single('picture');//el name del type file
 
@@ -123,8 +149,8 @@ app.get('/:username/:id', function (req, res) {
   res.render('index', { title: `Platzigram - ${req.params.username}` });
 })
 
-app.listen(3000, function (err){
+app.listen(port, function (err){
   if (err) return console.log('Hubo un error'), process.exit(1);//Devolvemos un mensaje si existe algun error
 
-  console.log('Escuchando en el puerto 3000');
+  console.log(`Escuchando en el puerto ${port}`);
 });
