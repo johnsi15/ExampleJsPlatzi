@@ -12,7 +12,7 @@ const platzigram = require('platzigramclient');
 var config = require('./config');
 const port = process.env.PORT || 3000;
 
-const cliente = platzigram.createClient(config.client);
+const client = platzigram.createClient(config.client);
 
 var s3 = new aws.S3({
   accessKeyId: config.aws.accessKey,
@@ -45,7 +45,7 @@ var app = express();//Creamos el objeto app
 
 app.set(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser);
+app.use(cookieParser());
 app.use(expressSession({
   secret: config.secret,
   resave: false,
@@ -64,18 +64,18 @@ app.get('/', function (req, res){
   res.render('index', { title: 'Platzigram' });//Rendereamos al archivos index que se encuentra en una carpeta views
 });
 
-// app.get('/signup', function (req, res){
-//   res.render('index', { title: 'Platzigram - Signup' });
-// });
+app.get('/signup', function (req, res){
+  res.render('index', { title: 'Platzigram - Signup' });
+});
 
-// app.post('/signup', function (req, res){
-//   const user = req.body;
-//   client.saveuser(user, function (err, usr) {
-//     if (err) return res.status(500).send(err.message);
+app.post('/signup', function (req, res){
+  const user = req.body;
+  client.saveUser(user, function (err, usr) {
+    if (err) return res.status(500).send(err.message);
 
-//     res.redirect('/signin');
-//   })
-// });
+    res.redirect('/signin');
+  })
+});
 
 app.get('/signin', function (req, res){
   res.render('index', { title: 'Platzigram - Signin' });
