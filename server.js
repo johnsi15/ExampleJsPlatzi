@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const expressSession = require('express-session');
 const passport = require('passport');
 const platzigram = require('platzigramclient');
+const auth = require('./auth');
 var config = require('./config');
 const port = process.env.PORT || 3000;
 
@@ -53,6 +54,10 @@ app.use(expressSession({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+passport.user(auth.localStrategy);
+passport.deserializeUser(auth.deserializeUser);
+passport.serializeUser(auth.serializeUser);
 
 app.set('view engine', 'pug');//Indicamos a express que vamos a usar views basadas en pug -> jade
 
