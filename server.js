@@ -86,6 +86,19 @@ app.get('/signin', function (req, res){
   res.render('index', { title: 'Platzigram - Signin' });
 });
 
+app.post('/login', passport.authenticate('local', {
+  successRedirect: '/',
+  failureRedirect: '/signin'
+}))
+
+function ensureAuth(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+
+  res.status(401).send({ error: 'not athenticated' })
+}
+
 app.get('/api/pictures', function (req, res){
   var pictures = [
     {
@@ -115,7 +128,7 @@ app.get('/api/pictures', function (req, res){
   setTimeout(() => res.send(pictures), 2000);//express por defecto le indica que es un objeto de tipo json
 });
 
-app.post('/api/pictures', function(req, res){
+app.post('/api/pictures', ensureAuth, function(req, res){
   // console.log(res);
   // console.log(req);
   upload(req, res, function(err){

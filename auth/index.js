@@ -1,4 +1,4 @@
-const LocalStrategy = require('passport-local').Stategy;
+const LocalStrategy = require('passport-local').Strategy;
 const platzigram = require('platzigramclient');
 const config = require('../config');
 
