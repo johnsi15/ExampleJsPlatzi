@@ -55,7 +55,7 @@ app.use(expressSession({
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.user(auth.localStrategy);
+passport.use(auth.localStrategy);
 passport.deserializeUser(auth.deserializeUser);
 passport.serializeUser(auth.serializeUser);
 
@@ -86,10 +86,15 @@ app.get('/signin', function (req, res){
   res.render('index', { title: 'Platzigram - Signin' });
 });
 
-app.post('/login', passport.authenticate('local', {
-  successRedirect: '/',
-  failureRedirect: '/signin'
-}))
+// app.post('/login', passport.authenticate('local', {
+//   successRedirect: '/',
+//   failureRedirect: '/signin'
+// }))
+
+app.post('/login', passport.authenticate('local', { failureRedirect: '/signin' }),
+  function (req, res) {
+    res.redirect('/');
+});
 
 function ensureAuth(req, res, next) {
   if (req.isAuthenticated()) {

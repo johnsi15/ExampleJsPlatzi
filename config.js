@@ -12,15 +12,26 @@ const config = {
       auth: 'http://api.platzigram.com/auth',
     }
   },
-  secret: process.env.PLATZISECRET || 'clave-secret'
+  auth: {
+    facebook: {
+      // clientID: process.env.FACEBOOK_CLIENT_ID,
+      clientID: '574520476213889',
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+      callbackURL: 'http://platzigram.com/auth/facebook/callback'
+    }
+  },
+  secret: process.env.PLATZISECRET || 'pl4tzi'
 }
 
-if (process.env.NODE_ENV !== 'production') {
+// For development use local micro instances
+if (process.env.NODE_ENV !== "production") {
   config.client.endpoints = {
     pictures: 'http://localhost:5000',
     users: 'http://localhost:5001',
-    auth: 'http://localhost:5002',
+    auth: 'http://localhost:5002'
   }
-} 
 
-module.exports = config;
+  // config.auth.facebook.callbackURL = 'http://platzigram.test:5050/auth/facebook/callback'
+}
+
+module.exports = config
