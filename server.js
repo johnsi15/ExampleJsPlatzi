@@ -56,6 +56,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.use(auth.localStrategy);
+passport.use(auth.facebookStrategy);
 passport.deserializeUser(auth.deserializeUser);
 passport.serializeUser(auth.serializeUser);
 
@@ -103,6 +104,13 @@ function ensureAuth(req, res, next) {
 
   res.status(401).send({ error: 'not athenticated' })
 }
+
+app.get('/auth/facebook', passport.authenticate('facebook', { scope: 'email' }));
+
+app.get('/auth/facebook/callback', passport.authenticate('facebook', {
+  successRedirect: '/',
+  failureRedirect: '/signin'
+}));
 
 app.get('/api/pictures', function (req, res){
   var pictures = [
