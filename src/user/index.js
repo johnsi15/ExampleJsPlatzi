@@ -8,16 +8,17 @@ import template from './template'//es necesario ponerle el punto
 import title from 'title'
 // var header = require('../header');
 import header from '../header'
+import utils from '../utils';
 
 //Si definimos esta ruta con page funcionan mientras nevegamos pero si vamos a la ruta como tal la busca en el server.js
 //ej: http://localhost:3000/jandrey15 pegamos en el navegador y damos enter eso nos arroja error porque no esta definidad en el server
-page('/:username',  header, loadUser, function (ctx, next) {
+page('/:username', loadUser, utils.loadAuth, header, function (ctx, next) {
   var main = document.getElementById('main-container');
   title(`Platzigram - ${ctx.params.username}`);
   empty(main).appendChild(template(ctx.user));
 });
 
-page('/:username/:id', header, loadUser, function (ctx, next) {
+page('/:username/:id', loadUser, utils.loadAuth, header, function (ctx, next) {
   var main = document.getElementById('main-container');
   title(`Platzigram - ${ctx.user.username}`);
   empty(main).appendChild(template(ctx.user));//Creo que no es necesario

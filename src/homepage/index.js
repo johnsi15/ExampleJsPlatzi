@@ -6,9 +6,10 @@ var request = require('superagent');
 var header = require('../header');
 var axios = require('axios');
 var webcam = require('webcamjs');
-var picture = require('../picture-card');//para cargar la foto tomada con la webcam 
+var picture = require('../picture-card');//para cargar la foto tomada con la webcam
+var utils = require('../utils')
 
-page('/', header, loading, asyncLoad, function (ctx, next){
+page('/', utils.loadAuth, header, loading, asyncLoad, function (ctx, next){
   title('Platzigram');
   var main = document.getElementById('main-container');
 

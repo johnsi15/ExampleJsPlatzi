@@ -97,6 +97,11 @@ app.post('/login', passport.authenticate('local', { failureRedirect: '/signin' }
     res.redirect('/');
 });
 
+app.get('/logout', function (req, res) {
+  req.logout();
+  res.redirect('/');
+});
+
 function ensureAuth(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
@@ -112,43 +117,40 @@ app.get('/auth/facebook/callback', passport.authenticate('facebook', {
   failureRedirect: '/signin'
 }));
 
-app.get('/api/pictures', function (req, res){
-  var pictures = [
-    {
-      user:{
-        username: 'jandrey15',
-        avatar: 'https://scontent.fctg1-1.fna.fbcdn.net/v/t31.0-8/s960x960/17388763_10210434599398986_6031305122262083505_o.jpg?oh=722b62fed19becfc3dbbc60fe3b55ec5&oe=59BF22B4'
-      },
-      url: 'office.jpg',
-      likes: 0,
-      liked: false,
-      createdAt: new Date().getTime()
-    },
-    {
-      user:{
-        username: 'andrea',
-        avatar: 'https://scontent.fctg1-1.fna.fbcdn.net/v/t31.0-8/s960x960/17388763_10210434599398986_6031305122262083505_o.jpg?oh=722b62fed19becfc3dbbc60fe3b55ec5&oe=59BF22B4'
-      },
-      url: 'office.jpg',
-      likes: 1,
-      liked: true,
-      createdAt: new Date().setDate(new Date().getDate() - 10)
-    }
-  ];
-  // setTimeout(function (){
-  //   res.send(pictures);//express por defecto le indica que es un objeto de tipo json
-  // }, 2000);
-  setTimeout(() => res.send(pictures), 2000);//express por defecto le indica que es un objeto de tipo json
+app.get('/api/pictures', function (req, res, next) {
+  client.listPictures(function (err, pictures) {
+    if (err) return res.send([]);
+
+    res.send(pictures);
+  })
 });
 
 app.post('/api/pictures', ensureAuth, function(req, res){
-  // console.log(res);
-  // console.log(req);
-  upload(req, res, function(err){
-    if(err){
-      return res.send(500, 'Error uploading file');
+  upload(req, res, function (err) {
+    if (err) {
+      return res.status(500).send(`Error uploading file: ${err.message}`);
     }
-    res.send('File upload');
+
+    var user = req.user
+    var token = req.user.token;
+    var username = req.user.username;
+    var src = req.file.location
+
+    client.savePicture({
+      src: src,
+      userId: username,
+      user: {
+        username: username,
+        avatar: user.avatar,
+        name: user.name
+      }
+    }, token, function (err, img) {
+      if (err) {
+        return res.status(500).send(err.message)
+      }
+
+      res.send(`File uploaded: ${req.file.location}`);
+    })
   })
 });
 
@@ -192,6 +194,14 @@ app.get('/api/user/:username', (req, res) => {
 
   res.send(user);
 });
+
+app.get('/whoami', function (req, res) {
+  if (req.isAuthenticated()) {
+    return res.json(req.user)
+  }
+
+  res.json({ auth: false })
+})
 
 app.get('/:username', function (req, res){
   res.render('index', { title: `Platzigram - ${req.params.username}` });
