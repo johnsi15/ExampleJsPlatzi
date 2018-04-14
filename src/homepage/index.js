@@ -4,10 +4,12 @@ var template = require('./template');
 var title = require('title');
 var request = require('superagent');
 var header = require('../header');
+var picture = require('../picture-card');
 var axios = require('axios');
-var webcam = require('webcamjs');
-var picture = require('../picture-card');//para cargar la foto tomada con la webcam
-var utils = require('../utils')
+var io = require('socket.io-client');
+var utils = require('../utils');
+
+var socket = io.connect('http://localhost:5151') // use envify
 
 page('/', utils.loadAuth, header, loading, asyncLoad, function (ctx, next){
   title('Platzigram');
@@ -67,6 +69,13 @@ page('/', utils.loadAuth, header, loading, asyncLoad, function (ctx, next){
     } // Callback for Modal close
   });
 });
+
+socket.on('image', function (image) {
+  var picturesEl = document.getElementById('pictures-container')
+  var first = picturesEl.firstChild;
+  var img = picture(image);
+  picturesEl.insertBefore(img, first); // me gusto esta forma de agregar un elemento al inicio.
+})
 
 //con el ctx podemos ir pasando datos entre middleware
 function loading(ctx, next){
